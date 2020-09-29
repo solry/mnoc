@@ -1,0 +1,72 @@
+version: '3.8'
+services:
+
+  vqfx-ansible-provision:
+    container_name: vqfx-ansible-provision
+    build:
+      context: .
+      dockerfile: ./ansible-provision/ansible-provision.Dockerfile
+    command: ansible-playbook /opt/pb-provision-mnoc-vqfx.yaml -i host.docker.internal, --extra-vars "junos_port=${JUNOS_PORT}"
+
+  mnoc-mgmt:
+    build:
+      context: .
+      dockerfile: ./mnoc-mgmt/mgmt.Dockerfile
+    depends_on:
+#      - redis
+      - mysql
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "sleep 40 &&
+             echo /opt/ > /usr/local/lib/python3.8/site-packages/opt.pth &&
+             python /opt/mnoc_mgmt/manage.py migrate &&
+             python /opt/mnoc_mgmt/manage.py loaddata mnoc_mgmt/service_directory/fixtures/device.json &&
+             python /opt/mnoc_mgmt/manage.py create_superuser_custom --username mnoc-mgmt-admin --password mnoc-mgmt-password --noinput --email 'blank@email.com' &&
+             python /opt/mnoc_mgmt/manage.py runserver 0.0.0.0:8000"
+
+  mnoc-sync:
+    build:
+      context: .
+      dockerfile: ./mnoc-sync/sync.Dockerfile
+    depends_on:
+      - redis
+      - mnoc-mgmt
+    environment:
+      - JUNOS_PORT=${JUNOS_PORT}
+    command: >
+      sh -c "sleep 60 &&
+             echo /opt/ > /usr/local/lib/python3.8/site-packages/opt.pth &&
+             python /opt/mnoc_sync/sync.py"
+
+  mnoc-snmpcollector:
+    build:
+      context: .
+      dockerfile: ./mnoc-snmpcollector/snmpcollector.Dockerfile
+    depends_on:
+      - redis
+    ports:
+      - "162:162/udp"
+    privileged: true
+    command: >
+      sh -c "echo /opt/ > /usr/local/lib/python3.8/site-packages/opt.pth &&
+             python /opt/mnoc_snmpcollector/collector.py"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  mysql:
+    build:
+      context: .
+      dockerfile: ./mysql/mysql.Dockerfile
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=mnoc-mgmt-db
+      - MYSQL_ROOT_PASSWORD=db-password-root
+      - MYSQL_USER=db-user
+      - MYSQL_PASSWORD=db-password
+    command: --default-authentication-plugin=mysql_native_password
+

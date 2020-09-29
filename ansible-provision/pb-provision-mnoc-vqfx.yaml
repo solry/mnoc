@@ -1,0 +1,24 @@
+- hosts: all
+  gather_facts: no
+  roles:
+    - Juniper.junos
+  tasks:
+    - name: "Set facts"
+      set_fact:
+        ansible_host: "host.docker.internal"
+        ansible_network_os: junos
+        ansible_connection: netconf
+        ansible_port: "{{junos_port}}"
+        ansible_user: "root"
+        ansible_password: "Juniper"
+    - name: "Provision vQFX switch machine which is run at the Host"
+      juniper_junos_config:
+        config_mode: "private"
+        load: "set"
+        lines:
+          - "set snmp trap-group public categories configuration"
+          - "set snmp trap-group public targets 10.0.2.2"
+          - "set system login user automation authentication encrypted-password \"$6$ZoLi2t0Q$\/eRSKIsGCBSIf2mCHRCk4egEu9TRvH2JiMiKrkBFaPPJuzsSSH4otLpKWNzyyg7b0BgVzNyFCMh6eCExSCAHl0\""
+          - "set system login user automation class super-user"
+          - "set system login user human authentication encrypted-password \"$6$ZoLi2t0Q$\/eRSKIsGCBSIf2mCHRCk4egEu9TRvH2JiMiKrkBFaPPJuzsSSH4otLpKWNzyyg7b0BgVzNyFCMh6eCExSCAHl0\""
+          - "set system login user human class super-user"

@@ -1,0 +1,5 @@
+[
+  {"model": "service_directory.device", "pk": 1,
+    "fields": {"name": "vqfx", "management_ip": "host.docker.internal"}
+  }
+]
