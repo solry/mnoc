@@ -91,6 +91,24 @@ docker-compose -f docker-compose.test.yaml build
 docker-compose -f docker-compose.test.yaml up
 ```
 
+```
+ ----------- coverage: platform linux, python 3.8.6-final-0 -----------
+ Name                        Stmts   Miss  Cover
+ -----------------------------------------------
+ mnoc_jobtools/__init__.py       0      0   100%
+ mnoc_jobtools/tests.py         48      0   100%
+ mnoc_jobtools/tools.py         77      0   100%
+ mnoc_sync/__init__.py           0      0   100%
+ mnoc_sync/mgmt_api.py          57      8    86%
+ mnoc_sync/network.py           36      2    94%
+ mnoc_sync/sync.py             124     20    84%
+ mnoc_sync/tests.py             76      3    96%
+ -----------------------------------------------
+ TOTAL                         418     33    92%
+ 
+ ================== 28 passed, 2 xfailed, 1 warning in 24.07s ===================
+```
+
 ## What we can do better?
 Well. Million of things. 
 This is just unproductionized demo. Still, the software architecture allows to scale much further - 
@@ -103,3 +121,7 @@ for different network service and vendors.
 - mnoc-sync - now it is very specific app, but could be made more abstract to be able to sync any services.
 - Consider some Job executor engine as Celery
 - More logs and tests does never harm.
+- Application code monitoring (e.g. Sentry)
+- Move functional modules like MgmtRestApi to a separate package
+- Orchestrate containers using kubernetes
+- Use probes for readiness/liveness detection (at least for db and redis)
