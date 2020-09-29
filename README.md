@@ -16,14 +16,17 @@ Here, we have the following components:
 3. **redis** - Just a simple redis kv-store. Here it is being used as a queue backend.
     All interactions with redis are done using library `mnoc_jobtools`
 4. **juniper-vqfx** - This is VM which is run by Vagrant/Virtual box 
-    (unfortunately, I didn't manage to find OS-agnostic way to run vqfx in container)
+    (I didn't manage to find easy OS-agnostic way to run vqfx in container)
 5. **mnoc-snmpcollector** - Docker container, that listens to UDP 162 and processes SNMP traps from device.
-    As soon as trap has been received and recognized as Juniper Change-management trap - it submits SyncJob to redis
+    As soon as trap has been received and recognized as Juniper Change-management trap - it submits SyncJob to redis.
+    Important - SyncJobs are not scheduled for `automation` user commits.
 6. **mnoc-sync** - This app in docker container constantly waits for a new SyncJob in Redis queue
     to start executing it. The only thing that the app needs to know - is synchronization direction: `DB->Device` or `Device->DB`. 
-    That makes him capable to fully synchronize one storage to another at any time.
+    That makes it capable to fully synchronize one storage to another at any time.
     We could basically run it scheduled, without any snmp/signal based hooks, but well, it's really easy, so let's better have some fun with real-time sync :)
 7. **vqfx-ansible-provision** - just a helper, which configures the vQFX switch for you with initial stuff, like logins/snmp.
+
+All containers are not persistent.
 
 ## Pre-requisites
 I've tried to make this project as OS-agnostic and plug-and-play as possible, but still, 
@@ -88,3 +91,4 @@ for different network service and vendors.
 - Event deduplication!!! Put events to one queue, dedup them and relay into the real job queue.
 - SNMP trap listener - use threads to scale up
 - mnoc-sync - now it is very specific app, but could be made more abstract to be able to sync any services.
+- Consider some Job executor engine as Celery
