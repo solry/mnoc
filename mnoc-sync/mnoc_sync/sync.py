@@ -20,7 +20,7 @@ MGMT_API_PORT = 8000
 MGMT_API_USER = "mnoc-mgmt-admin"
 MGMT_API_PASS = "mnoc-mgmt-password"
 
-DEVICE_PORT = os.getenv('JUNOS_PORT')
+DEVICE_PORT = os.getenv("JUNOS_PORT")
 DEVICE_USER = "automation"
 DEVICE_PASS = "p@ssword"
 DEVICE_VENDOR = "juniper"
@@ -134,9 +134,7 @@ class VlanSyncJobExecutor:
                     mapping_found = True
                     diff["synced_vlans"].append(sot_vlan)
                 # Case #2: The same vlan ID but some info is outdated
-                elif are_equal_vlans(
-                    subject_vlan, sot_vlan, sot=sot, tag_only=True
-                ):
+                elif are_equal_vlans(subject_vlan, sot_vlan, sot=sot, tag_only=True):
                     mapping_found = True
                     diff["altered_vlans"].append(sot_vlan)
                 else:

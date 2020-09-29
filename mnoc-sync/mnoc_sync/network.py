@@ -9,6 +9,7 @@ VLAN_CONFIG_TEMPLATE = str(Path(__file__).resolve().parent / "vlan_template.conf
 
 class NetworkDeviceException(Exception):
     """Base exception related to Network device connection and configuration"""
+
     pass
 
 
@@ -20,7 +21,9 @@ class NetworkDevice:
         self.user = user
         self.port = port
         self.password = password
-        self.device = Device(host=self.host, port=self.port, user=self.user, password=self.password)
+        self.device = Device(
+            host=self.host, port=self.port, user=self.user, password=self.password
+        )
 
     def connect(self):
         self.device.open()
@@ -40,13 +43,18 @@ class NetworkDevice:
         if not self.connected:
             self.connect()
 
-        config = self.device.rpc.get_config(filter_xml="vlans", options={"format": "json"})
+        config = self.device.rpc.get_config(
+            filter_xml="vlans", options={"format": "json"}
+        )
         return [vlan for vlan in config["configuration"]["vlans"]["vlan"]]
 
     def sync_config_to_target_vlans(self, vlan_list):
         if not self.connected:
             self.connect()
 
-        with Config(self.device, mode='exclusive') as cu:
-            cu.load(template_path=VLAN_CONFIG_TEMPLATE, template_vars={"vlan_list": vlan_list})
+        with Config(self.device, mode="exclusive") as cu:
+            cu.load(
+                template_path=VLAN_CONFIG_TEMPLATE,
+                template_vars={"vlan_list": vlan_list},
+            )
             cu.commit()

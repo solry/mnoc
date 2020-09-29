@@ -7,10 +7,10 @@ class Command(BaseCommand):
     help = "Submits sync job for specified device"
 
     def add_arguments(self, parser):
-        parser.add_argument('device_ids', nargs='+', type=int)
+        parser.add_argument("device_ids", nargs="+", type=int)
 
     def handle(self, *args, **options):
-        for device_id in options['poll_ids']:
+        for device_id in options["poll_ids"]:
             try:
                 Device.objects.get(pk=device_id)
             except Device.DoesNotExist:

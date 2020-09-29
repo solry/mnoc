@@ -8,29 +8,56 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Device',
+            name="Device",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=128, unique=True)),
-                ('management_ip', models.GenericIPAddressField(db_index=True, protocol='ipv4', verbose_name='Management IPv4')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=128, unique=True)),
+                (
+                    "management_ip",
+                    models.GenericIPAddressField(
+                        db_index=True, protocol="ipv4", verbose_name="Management IPv4"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Vlan',
+            name="Vlan",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tag', models.PositiveSmallIntegerField()),
-                ('name', models.CharField(max_length=64)),
-                ('description', models.CharField(blank=True, max_length=128, null=True)),
-                ('device', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='service_directory.device')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("tag", models.PositiveSmallIntegerField()),
+                ("name", models.CharField(max_length=64)),
+                (
+                    "description",
+                    models.CharField(blank=True, max_length=128, null=True),
+                ),
+                (
+                    "device",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="service_directory.device",
+                    ),
+                ),
             ],
-            options={
-                'unique_together': {('device', 'tag'), ('device', 'name')},
-            },
+            options={"unique_together": {("device", "tag"), ("device", "name")},},
         ),
     ]

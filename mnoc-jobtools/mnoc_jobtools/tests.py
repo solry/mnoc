@@ -3,7 +3,8 @@ from mnoc_jobtools.tools import (
     RedisJobQueue,
     SyncJob,
     SyncJobSameTargetsException,
-    SyncJobUnknownTargetException, JobStatus,
+    SyncJobUnknownTargetException,
+    JobStatus,
 )
 from pytest import fixture
 

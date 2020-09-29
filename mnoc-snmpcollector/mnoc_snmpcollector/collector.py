@@ -91,6 +91,7 @@ class Collector:
             self.snmp_engine.transportDispatcher.closeDispatcher()
             raise
 
+
 ##################################################################
 
 
@@ -106,6 +107,7 @@ def get_device_id_from_db(device_ip: str):
     """
     logging.info(f"Fetching device_id from MNOC-Mgmt for ip {device_ip}")
     return 1
+
 
 ##################################################################
 

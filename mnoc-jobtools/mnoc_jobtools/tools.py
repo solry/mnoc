@@ -36,6 +36,7 @@ class SyncJobSameTargetsException(SyncJobException):
 
     pass
 
+
 ##################################################################
 
 
@@ -51,6 +52,7 @@ class RedisJobQueue:
 
     def put(self, queue_name, *values):
         self._queue.rpush(queue_name, *values)
+
 
 ##################################################################
 
@@ -186,9 +188,13 @@ class SyncJob:
             self.put_to_queue()
             logging.info(f"Sync Job was rescheduled {self}")
         else:
-            logging.info(f"Sync job attempts have exceeded the limit. Dropping this job: {self}")
+            logging.info(
+                f"Sync job attempts have exceeded the limit. Dropping this job: {self}"
+            )
             self.status = JobStatus.FAILURE
 
     def __str__(self):
-        return f"<SyncJob> <{self.uid}> {self.sync_from}->{self.sync_to}" \
-               f" Device: {self.device_id} Status: {self.status}"
+        return (
+            f"<SyncJob> <{self.uid}> {self.sync_from}->{self.sync_to}"
+            f" Device: {self.device_id} Status: {self.status}"
+        )

@@ -22,19 +22,23 @@ DEVICE_DB_IP = "host.docker.internal"
 
 # FIXTURES #########################################################################
 
+
 @fixture(params=[["db", "device"], ["device", "db"]])
 def sync_job(request):
     return SyncJob(
         device_id=DEVICE_DB_ID, sync_from=request.param[0], sync_to=request.param[1]
     )
 
+
 @fixture
 def sync_job_db_to_device():
     return SyncJob(device_id=1, sync_from="db", sync_to="device")
 
+
 @fixture
 def sync_job_device_to_db():
     return SyncJob(device_id=1, sync_from="device", sync_to="db")
+
 
 @fixture
 def mgmt_api():
@@ -44,6 +48,7 @@ def mgmt_api():
         password=MGMT_API_PASS,
         port=MGMT_API_PORT,
     )
+
 
 @fixture
 def network_device():
@@ -55,9 +60,11 @@ def network_device():
         vendor=DEVICE_VENDOR,
     )
 
+
 @fixture
 def job_executor(sync_job):
     return VlanSyncJobExecutor(sync_job=sync_job)
+
 
 @fixture
 def device_vlan_list():
@@ -65,11 +72,13 @@ def device_vlan_list():
         {"name": "pytest-device-vlan-100", "vlan-id": 100, "description": "pytest",}
     ]
 
+
 @fixture
 def device_vlan_list_new():
     return [
         {"name": "pytest-device-vlan-333", "vlan-id": 333, "description": "pytest",}
     ]
+
 
 @fixture
 def db_vlan_list():
@@ -81,6 +90,7 @@ def db_vlan_list():
             "device": DEVICE_DB_ID,
         }
     ]
+
 
 @fixture
 def db_vlan_list_altered():
@@ -96,14 +106,15 @@ def db_vlan_list_altered():
             "tag": 100,
             "description": "ALTERED IN DB",
             "device": DEVICE_DB_ID,
-        }
+        },
     ]
+
 
 @fixture
 def device_vlan_list_altered():
     return [
         {"name": "pytest-device-vlan-100", "tag": 100, "description": "pytest",},
-        {"name": "pytest-device-vlan-300", "tag": 300, "description": "pytest",}
+        {"name": "pytest-device-vlan-300", "tag": 300, "description": "pytest",},
     ]
 
 
