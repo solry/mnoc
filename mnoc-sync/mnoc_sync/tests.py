@@ -146,16 +146,7 @@ class TestSyncJobExecutor:
         assert job_executor.fetch_vlan_list_from_device()
 
     def test_fetch_vlans_from_db(self, job_executor):
-        assert job_executor.fetch_vlan_list_from_db()
-
-    def test_vlan_comparison_against_db(
-        self, job_executor, db_vlan_list_altered, device_vlan_list
-    ):
-        diff = job_executor.compare_vlans_against_source_of_truth(
-            device_vlan_list, db_vlan_list_altered, sot="db"
-        )
-        assert diff["altered_vlans"] == db_vlan_list_altered
-        assert diff["removed_vlans"] == device_vlan_list
+        assert job_executor.fetch_vlan_list_from_db() == []
 
     def test_vlan_comparison_against_db_altered(
         self, job_executor, db_vlan_list, device_vlan_list

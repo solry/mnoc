@@ -2,13 +2,14 @@ version: '3.8'
 services:
 
   vqfx-ansible-provision:
-    container_name: vqfx-ansible-provision
+    container_name: vqfx-ansible-provision-test
     build:
       context: .
       dockerfile: ./ansible-provision/ansible-provision.Dockerfile
     command: ansible-playbook /opt/pb-provision-mnoc-vqfx.yaml -i host.docker.internal, --extra-vars "junos_port=${JUNOS_PORT}"
 
   mnoc-mgmt:
+    container_name: mnoc-mgmt-test
     build:
       context: .
       dockerfile: ./mnoc-mgmt/mgmt.Dockerfile
@@ -25,7 +26,8 @@ services:
              python /opt/mnoc_mgmt/manage.py create_superuser_custom --username mnoc-mgmt-admin --password mnoc-mgmt-password --noinput --email 'blank@email.com' &&
              python /opt/mnoc_mgmt/manage.py runserver 0.0.0.0:8000"
 
-  mnoc-sync:
+  mnoc-test:
+    container_name: mnoc-test
     build:
       context: .
       dockerfile: ./mnoc-sync/sync.Dockerfile
@@ -35,11 +37,12 @@ services:
     environment:
       - JUNOS_PORT=${JUNOS_PORT}
     command: >
-      sh -c "sleep 60 &&
+      sh -c "echo Waiting for DB && sleep 60 &&
              echo /opt/ > /usr/local/lib/python3.8/site-packages/opt.pth &&
-             python /opt/mnoc_sync/sync.py"
+             python -m pytest --tb=line --cov=mnoc_sync --cov=mnoc_jobtools /opt/mnoc_jobtools/tests.py /opt/mnoc_sync/tests.py"
 
   mnoc-snmpcollector:
+    container_name: mnoc-snmpcollector-test
     build:
       context: .
       dockerfile: ./mnoc-snmpcollector/snmpcollector.Dockerfile
@@ -53,11 +56,13 @@ services:
              python /opt/mnoc_snmpcollector/collector.py"
 
   redis:
+    container_name: redis-test
     image: redis:latest
     ports:
       - "6379:6379"
 
   mysql:
+    container_name: mysql-test
     build:
       context: .
       dockerfile: ./mysql/mysql.Dockerfile

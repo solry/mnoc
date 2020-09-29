@@ -43,7 +43,7 @@ Vagrant is the easiest way to deploy the virtualized switch and doesn't require 
 ```shell script
 git clone https://github.com/solry/mnoc && cd mnoc
 cd vqfx-vagrant && vagrant up && export JUNOS_PORT=$(vagrant port --guest 22) && cd .. && sleep 20
-dcoker-compose build
+docker-compose build
 docker-compose up
 ```
 If you have any issues with the environment setup, please let me know
@@ -81,6 +81,16 @@ Then config `set snmp trap-group public targets {}` with correct address at the 
 |               | human username |	human
 |               | human password |	p@ssword
 
+## Run tests
+This is pretty similar to dev environment setup, but you need to use another docker-compose file.
+```shell script
+# git clone https://github.com/solry/mnoc && cd mnoc
+cd vqfx-vagrant && vagrant up && export JUNOS_PORT=$(vagrant port --guest 22) && cd .. && sleep 20
+docker-compose rm -fv   # clean up all the volumes and containers to avoid collisions (you will loose all your data in dev environment)
+docker-compose -f docker-compose.test.yaml build
+docker-compose -f docker-compose.test.yaml up
+```
+
 ## What we can do better?
 Well. Million of things. 
 This is just unproductionized demo. Still, the software architecture allows to scale much further - 
@@ -89,6 +99,7 @@ for different network service and vendors.
 - WSGI-webserver. We should have separate container to run webserver and connect our Django app using WSGI (e.g. uWSGI, gunicorn)
 - Cache server for Django web-app
 - Event deduplication!!! Put events to one queue, dedup them and relay into the real job queue.
-- SNMP trap listener - use threads to scale up
+- SNMP trap listener - use threads to scale up, use separate queue for SNMP traps and only then process them using another application.
 - mnoc-sync - now it is very specific app, but could be made more abstract to be able to sync any services.
 - Consider some Job executor engine as Celery
+- More logs and tests does never harm.
